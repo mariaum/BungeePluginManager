@@ -22,9 +22,11 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.PluginClassloader;
 import net.md_5.bungee.api.plugin.PluginDescription;
 import net.md_5.bungee.api.plugin.PluginManager;
+
+import static bungeepluginmanager.ReflectionUtils.PLUGIN_CLASSLOADER;
+import static bungeepluginmanager.ReflectionUtils.PLUGIN_CLASSLOADER_CTR;
 
 public class PluginUtils {
 
@@ -99,7 +101,7 @@ public class PluginUtils {
 			}
 		}
 		//remove classloader
-		Set<PluginClassloader> allLoaders = ReflectionUtils.getStaticFieldValue(PluginClassloader.class, "allLoaders");
+		Set<? extends URLClassLoader> allLoaders = ReflectionUtils.getStaticFieldValue(PLUGIN_CLASSLOADER, "allLoaders");
 		allLoaders.remove(pluginclassloader);
 	}
 
@@ -126,7 +128,7 @@ public class PluginUtils {
 					}
 				}
 				//load plugin
-				URLClassLoader loader = new PluginClassloader(new URL[] { pluginfile.toURI().toURL() });
+				URLClassLoader loader = PLUGIN_CLASSLOADER_CTR.newInstance(ProxyServer.getInstance(), desc, new URL[] { pluginfile.toURI().toURL() });
 				Class<?> mainclazz = loader.loadClass(desc.getMain());
 				Plugin plugin = (Plugin) mainclazz.getDeclaredConstructor().newInstance();
 				ReflectionUtils.invokeMethod(plugin, "init", ProxyServer.getInstance(), desc);

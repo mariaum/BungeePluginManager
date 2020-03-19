@@ -1,9 +1,31 @@
 package bungeepluginmanager;
 
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.PluginDescription;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.logging.Level;
 
 public class ReflectionUtils {
+
+	public static Class<? extends URLClassLoader> PLUGIN_CLASSLOADER;
+	public static Constructor<? extends URLClassLoader> PLUGIN_CLASSLOADER_CTR;
+
+	public static boolean init(BungeePluginManager plugin) {
+		try {
+			PLUGIN_CLASSLOADER = (Class<? extends URLClassLoader>) Class.forName("net.md_5.bungee.api.plugin.PluginClassloader");
+			PLUGIN_CLASSLOADER_CTR = PLUGIN_CLASSLOADER.getDeclaredConstructor(ProxyServer.class, PluginDescription.class, URL[].class);
+			PLUGIN_CLASSLOADER_CTR.setAccessible(true);
+			return true;
+		} catch (ClassNotFoundException | NoSuchMethodException e) {
+			plugin.getLogger().log(Level.WARNING, "Failed to reflect net.md_5.bungee.api.plugin.PluginClassloader", e);
+			return false;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T getFieldValue(Object obj, String fieldname) {

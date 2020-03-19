@@ -13,5 +13,5 @@ repositories {
 }
 
 dependencies {
-    compile 'net.md-5:bungeecord-proxy:1.8-SNAPSHOT'
+    compile 'net.md-5:bungeecord-proxy:1.15-SNAPSHOT'
 }
