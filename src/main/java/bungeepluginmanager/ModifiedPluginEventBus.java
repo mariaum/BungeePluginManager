@@ -3,6 +3,7 @@ package bungeepluginmanager;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.md_5.bungee.api.event.AsyncEvent;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -17,11 +18,19 @@ public class ModifiedPluginEventBus extends EventBus {
 		synchronized (lock) {
 			for (AsyncEvent<?> event : uncompletedEvents) {
 				try {
-					event.completeIntent(plugin);
+					while (hasIntent(event, plugin)) {
+						event.completeIntent(plugin);
+					}
 				} catch (Throwable t) {
+					t.printStackTrace();
 				}
 			}
 		}
+	}
+
+	private static boolean hasIntent(AsyncEvent<?> event, Plugin plugin) {
+		AtomicInteger intentCount = ReflectionUtils.getIntents(event).get(plugin);
+		return intentCount != null && intentCount.get() > 0;
 	}
 
 	@Override
