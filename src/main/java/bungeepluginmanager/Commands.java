@@ -17,12 +17,19 @@ import net.md_5.bungee.api.plugin.PluginDescription;
 
 public class Commands extends Command {
 
-	public Commands() {
+	private final BungeePluginManager plugin;
+
+	public Commands(BungeePluginManager plugin) {
 		super("bungeepluginmanager", "bungeepluginmanager.cmds", new String[] { "bpm" });
+		this.plugin = plugin;
 	}
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
+		this.plugin.getProxy().getScheduler().runAsync(this.plugin, () -> this.execute(sender, args));
+	}
+
+	private void executeSync(CommandSender sender, String[] args) {
 		if (args.length < 2) {
 			sender.sendMessage(textWithColor("Not enough args", ChatColor.RED));
 			return;
