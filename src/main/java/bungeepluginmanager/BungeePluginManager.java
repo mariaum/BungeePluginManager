@@ -11,7 +11,7 @@ public class BungeePluginManager extends Plugin {
 			return;
 		}
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Commands(this));
-		ReflectionUtils.setFieldValue(ProxyServer.getInstance().getPluginManager(), "eventBus", new ModifiedPluginEventBus());
+		//ReflectionUtils.setFieldValue(ProxyServer.getInstance().getPluginManager(), "eventBus", new ModifiedPluginEventBus());
 	}
 
 }
