@@ -26,7 +26,7 @@ public class Commands extends Command {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		this.plugin.getProxy().getScheduler().runAsync(this.plugin, () -> this.execute(sender, args));
+		this.plugin.getProxy().getScheduler().runAsync(this.plugin, () -> this.executeSync(sender, args));
 	}
 
 	private void executeSync(CommandSender sender, String[] args) {
