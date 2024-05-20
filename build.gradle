@@ -11,15 +11,6 @@ group 'bungeepluginmanager'
 version '2.1'
 sourceCompatibility = JavaVersion.VERSION_1_8
 
-
-File targetJarDirectory = new File("target")
-
-
-task setupFolders(type: DefaultTask) {doLast{
-	targetJarDirectory.mkdirs()
-}}
-
-
 sourceSets {
 	main {
 		java {
@@ -62,18 +53,6 @@ shadowJar {
 	archiveName = jar.archiveName
 }
 
-
-task copyFinalJarToTarget(type: DefaultTask) {doLast{
-	java.nio.file.Files.copy(
-		shadowJar.archivePath.getAbsoluteFile().toPath(),
-		new File(targetJarDirectory, jar.baseName + '.jar').getAbsoluteFile().toPath(),
-		java.nio.file.StandardCopyOption.REPLACE_EXISTING
-	)
-}}
-
-
 compileJava.dependsOn(clean)
-compileJava.dependsOn(setupFolders)
 jar.enabled = false
 jar.finalizedBy(shadowJar)
-shadowJar.finalizedBy(copyFinalJarToTarget)
